@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>类似百度的搜索页面</title>
+  <style>
+    /* 全局样式 */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* 头部样式 */
+   .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+    }
+
+   .logo img {
+      height: 30px;
+    }
+
+   .search-bar {
+      display: flex;
+      align-items: center;
+    }
+
+   .search-bar input {
+      padding: 5px 10px;
+      width: 400px;
+      border: none;
+      border-radius: 5px 0 0 5px;
+    }
+
+   .search-bar button {
+      padding: 5px 15px;
+      background-color: #0080FF;
+      color: white;
+      border: none;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+    }
+
+   .nav-links a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+    }
+
+    /* 下拉菜单样式 */
+   .dropdown-menu {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+
+   .dropdown-menu li {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+   .dropdown-menu li:hover {
+      background-color: #f1f1f1;
+    }
+
+   .nav-links li:hover.dropdown-menu {
+      display: block;
+    }
+
+    /* 响应式相关样式 */
+    @media screen and (max-width: 768px) {
+     .nav-links {
+        display: none;
+      }
+
+     .hamburger-menu {
+        display: block;
+      }
+    }
+
+    @media screen and (min-width: 769px) {
+     .nav-links {
+        display: flex;
+      }
+
+     .hamburger-menu {
+        display: none;
+      }
+    }
+
+    /* 主体内容样式 */
+   .main-content {
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    /* 底部样式 */
+   .footer {
+      text-align: center;
+      background-color: #333;
+      color: white;
+      padding: 10px 0;
+    }
+
+    /* 搜索结果样式 */
+   .search-result-item {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+
+   .search-result-item:hover {
+      background-color: #f5f5f5;
+    }
+
+   .image-result img {
+      max-width: 100%;
+    }
+
+   .video-result img {
+      max-width: 100%;
+    }
+
+    /* 页面过渡效果相关样式 */
+   .page-transition {
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+   .page-transition.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 顶部导航栏 -->
+  <div class="header">
+    <div class="logo">
+      <img src="https://www.baidu.com/img/bd_logo1.png" alt="百度logo">
+    </div>
+    <div class="search-bar">
+      <input type="text" id="searchBox" placeholder="请输入关键词">
+      <button id="searchButton">百度一下</button>
+    </div>
+    <div class="nav-links">
+      <a href="#">新闻</a>
+      <a href="#">地图</a>
+      <a href="#">百科</a>
+      <a href="#">学术</a>
+      <li><a href="#">更多</a>
+        <ul class="dropdown-menu">
+          <li><a href="#">产品1</a></li>
+          <li><a href="#">产品2</a></li>
+        </ul>
+      </li>
+    </div>
+    <div class="hamburger-menu" onclick="toggleNavLinks()">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+
+  <!-- 主体内容区域 -->
+  <div class="main-content page-transition" id="mainContent">
+    <h1>欢迎来到类似百度的搜索页面</h1>
+    <p>在这里你可以输入关键词进行搜索，获取相关信息。</p>
+
+    <!-- 搜索结果展示区域 -->
+    <div id="searchResultsContainer"></div>
+
+    <!-- 搜索历史记录展示区域 -->
+    <div id="searchHistorySection">
+      <h2>搜索历史</h2>
+      <ul id="searchHistoryList"></ul>
+      <button id="clearHistoryButton">清除历史记录</button>
+    </div>
+  </div>
+
+  <!-- 底部信息 -->
+  <div class="footer">
+    <p>©2024 Baidu Inc. All Rights Reserved.</p>
+  </div>
+
+  <script>
+    // 导航栏交互 - 汉堡菜单点击切换导航链接显示隐藏
+    function toggleNavLinks() {
+      const navLinks = document.getElementById('navLinks');
+      navLinks.classList.toggle('show');
+    }
+
+    // 搜索框功能增强 - 自动完成与联想（这里只是示例逻辑，实际需后端配合）
+    const searchBox = document.getElementById('searchBox');
+    const suggestionBox = document.createElement('div');
+    suggestionBox.id = 'suggestionBox';
+    suggestionBox.style.position = 'absolute';
+    suggestionBox.style.backgroundColor = '#fff';
+    suggestionBox.style.border = '1px solid #ccc';
+    suggestionBox.style.borderTop = 'none';
+    suggestionBox.style.width = '400px';
+    document.body.appendChild(suggestionBox);
+
+    searchBox.addEventListener('input', function () {
+      const keyword = searchBox.value;
+      // 模拟后端返回的数据（实际要通过AJAX请求真实后端获取）
+      const mockSuggestions = ['关键词1', '关键词2', '关键词3'].filter(suggestion => suggestion.includes(keyword));
+      // 清空联想建议框
+      suggestionBox.innerHTML = '';
+      // 遍历并添加联想建议
+      mockSuggestions.forEach(function (suggestion) {
+        const suggestionItem = document.createElement('div');
+        suggestionItem.textContent = suggestion;
+        suggestionItem.addEventListener('click', function () {
+          searchBox.value = suggestion;
+          suggestionBox.innerHTML = '';
+        });
+        suggestionBox.appendChild(suggestionItem);
+      });
+    });
+
+    // 搜索历史记录
+    const searchHistoryList = document.getElementById('searchHistoryList');
+    const clearHistoryButton = document.getElementById('clearHistoryButton');
+
+    searchBox.addEventListener('search', function () {
+      const keyword = searchBox.value;
+      // 从本地存储中获取搜索历史
+      const searchHistory = JSON. = JSON.parse(localStorage.localStorage.getItem('searchHistory')) ||  || [];;
+      // 将新的关键词添加到搜索历史数组的开头// 将新的关键词添加到搜索历史数组的开头
+      searchHistory.      searchHistorysearchHistory.unshiftunshift((keywordkeyword));;
+      // 存储更新后的搜索历史// 存储更新后的搜索历史
+      localStorage.      localStoragelocalStorage.setItemsetItem(('searchHistory''searchHistory', JSON., JSON.stringifystringify((searchHistorysearchHistory))));;
+      // 显示搜索历史列表// 显示搜索历史列表
+      displaySearchHistorydisplaySearchHistory(());;
+    }}));;
+
+    functionfunction displaySearchHistory(()) {{
+      constconst searchHistory = JSON. = JSON.parseparse((localStorage.localStoragelocalStorage.getItemgetItem(('searchHistory''searchHistory')))) ||  || [[]];;
+      searchHistoryList.      searchHistoryListsearchHistoryList.innerHTMLinnerHTML =  = '''';;
+      searchHistory.      searchHistory.forEach(function (keyword, , indexindex)) {{
+        constconst historyItem = document. = document.createElement('li');;
+        historyItem.        historyItem.textContent = keyword; = keyword;
+        historyItem.        historyItem.addEventListener('click', , functionfunction (()) {{
+          searchBox.          searchBox.value = keyword; = keyword;
+        }}));;
+        constconst deleteButton = document. = document.createElement('button');;
+        deleteButton.        deleteButton.textContent =  = '删除';;
+        deleteButton.        deleteButton.addEventListener('click', , functionfunction (()) {{
+          // 从搜索历史中删除该项// 从搜索历史中删除该项
+          searchHistory.          searchHistory.splice(index, index, 1);;
+          localStorage.          localStorage.setItem('searchHistory', JSON., JSON.stringify(searchHistorysearchHistory));;
+          displaySearchHistorydisplaySearchHistory(());;
+        }});;
+        const listItem = document. = document.createElement('div');;
+        listItem.        listItem.appendChild(historyItemhistoryItem);;
+        listItem.        listItem.appendChild(deleteButtondeleteButton);;
+        searchHistoryList.        searchHistoryList.appendChild(listItemlistItem);;
+      });;
+    }
+
+    clearHistoryButton.    clearHistoryButton.addEventListener('click', , function () {
+      localStorage.      localStorage.removeItem('searchHistory');;
+      searchHistoryList.innerHTML = '';
+    });;
+
+    // 页面过渡效果示例（简单切换页面显示隐藏）
+    const pages = document. = document.querySelectorAll('.page-transition');;
+    let currentPage =  = 0;;
+
+    function showPage(pageIndex) {
+      pages.      pages.forEach(function (page, , index) {
+        if (index === pageIndexindex === pageIndex) {
+          page.          page.classList..add('show');;
+        } else {
+          page.          page.classList..remove('show');;
+        }
+      });;
+      currentPage = pageIndex;      currentPage = pageIndex;
+    }
+
+    // 假设点击搜索按钮切换到搜索结果页面（简单示例）
+    const searchButton = document. = document.getElementById('searchButton');;
+    searchButton.    searchButton.addEventListener('click', , function () {
+      showPage(1);;
+    });;
+  </scriptscript>
+<</body>
+
+    <    </html>
